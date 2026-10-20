@@ -363,16 +363,72 @@ catch {
 
 $networkAdapterUpCount = $null
 $networkAdapterTotalCount = $null
+$networkAdapterName = $null
+$networkAdapterType = $null
+$networkIpAddress = $null
+$networkSubnetMask = $null
+$networkDefaultGateway = $null
+$networkDhcpEnabled = $null
+$networkDnsServers = $null
+$networkConnected = 0
+$canPingGateway = 0
+$canResolveDns = 0
+$wifiSignalPercent = $null
+
 try {
+    $activeAdapter = $null
     if (Get-Command -Name Get-NetAdapter -ErrorAction SilentlyContinue) {
         $adapters = @(Get-NetAdapter -ErrorAction Stop | Where-Object { $_.HardwareInterface -eq $true })
         $networkAdapterTotalCount = $adapters.Count
         $networkAdapterUpCount = @($adapters | Where-Object { $_.Status -eq "Up" }).Count
+        $activeAdapter = @($adapters | Where-Object { $_.Status -eq "Up" } | Sort-Object Status, InterfaceDescription | Select-Object -First 1)[0]
     }
     else {
         $legacyAdapters = @(Get-CimInstance Win32_NetworkAdapter | Where-Object { $_.PhysicalAdapter -eq $true })
         $networkAdapterTotalCount = $legacyAdapters.Count
         $networkAdapterUpCount = @($legacyAdapters | Where-Object { $_.NetEnabled -eq $true }).Count
+        $activeAdapter = @($legacyAdapters | Where-Object { $_.NetEnabled -eq $true } | Sort-Object Index | Select-Object -First 1)[0]
+    }
+
+    if ($null -ne $activeAdapter) {
+        $networkAdapterName = $activeAdapter.Name
+        $networkAdapterType = if ($activeAdapter.InterfaceDescription -match "Wireless|802.11|Wi-Fi") { "WiFi" } elseif ($activeAdapter.InterfaceDescription -match "Ethernet|LAN") { "Ethernet" } else { "Unknown" }
+        $networkConnected = if ($activeAdapter.Status -eq "Up" -or $activeAdapter.NetEnabled -eq $true) { 1 } else { 0 }
+
+        $config = Get-CimInstance Win32_NetworkAdapterConfiguration -Filter ("InterfaceIndex = '{0}'" -f $activeAdapter.InterfaceIndex) -ErrorAction SilentlyContinue
+        if ($null -ne $config) {
+            $networkIpAddress = if ($config.IPAddress) { ($config.IPAddress | Select-Object -First 1) } else { $null }
+            $networkSubnetMask = if ($config.IPSubnet) { ($config.IPSubnet | Select-Object -First 1) } else { $null }
+            $networkDefaultGateway = if ($config.DefaultIPGateway) { ($config.DefaultIPGateway | Select-Object -First 1) } else { $null }
+            $networkDhcpEnabled = if ($null -ne $config.DHCPEnabled) { [int]$config.DHCPEnabled } else { $null }
+            $networkDnsServers = if ($config.DNSServerSearchOrder) { ($config.DNSServerSearchOrder -join ';') } else { $null }
+        }
+
+        if ($networkConnected -eq 1 -and $networkDefaultGateway) {
+            $canPingGateway = if (Test-Connection -ComputerName $networkDefaultGateway -Count 1 -Quiet -ErrorAction SilentlyContinue) { 1 } else { 0 }
+        }
+
+        if ($networkConnected -eq 1) {
+            try {
+                $null = Resolve-DnsName -Name "google.com" -QuickTimeout -ErrorAction Stop
+                $canResolveDns = 1
+            }
+            catch {
+                $canResolveDns = 0
+            }
+        }
+
+        if ($networkAdapterType -eq "WiFi") {
+            try {
+                $wifiInfo = Get-CimInstance -Namespace root\wmi -ClassName MSNdis_80211_ReceivedSignalStrength -ErrorAction Stop
+                if ($null -ne $wifiInfo) {
+                    $wifiSignalPercent = [math]::Clamp($wifiInfo.Ndis80211ReceivedSignalStrength, 0, 100)
+                }
+            }
+            catch {
+                $wifiSignalPercent = $null
+            }
+        }
     }
 }
 catch {
@@ -481,8 +537,19 @@ $row = [ordered]@{
     disk_health_code              = $diskHealthCode
     disk_health_detail            = $diskHealthDetail
     gpu_name                      = $gpu.Name
+    network_adapter_name          = $networkAdapterName
+    network_adapter_type          = $networkAdapterType
     network_adapter_up_count      = $networkAdapterUpCount
     network_adapter_total_count   = $networkAdapterTotalCount
+    network_connected            = $networkConnected
+    network_ip_address           = $networkIpAddress
+    network_subnet_mask          = $networkSubnetMask
+    network_default_gateway      = $networkDefaultGateway
+    network_dhcp_enabled         = $networkDhcpEnabled
+    network_dns_servers          = $networkDnsServers
+    can_ping_gateway             = $canPingGateway
+    can_resolve_dns              = $canResolveDns
+    wifi_signal_percent          = $wifiSignalPercent
     keyboard_present              = $keyboardPresent
     mouse_present                 = $mousePresent
     monitor_count                 = $monitorCount
