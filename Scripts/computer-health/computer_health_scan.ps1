@@ -511,8 +511,8 @@ if ($null -eq $windowsUpdatePendingCount) {
 }
 
 $row = [ordered]@{
-    scan_timestamp                = $timestamp.ToString("s")
     computer_number               = $computerNumber
+    scan_timestamp                = $timestamp.ToString("s")
     collection_status             = $collectionStatus
     hostname                      = $env:COMPUTERNAME
     manufacturer                  = $computerSystem.Manufacturer
