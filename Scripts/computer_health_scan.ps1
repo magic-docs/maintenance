@@ -87,7 +87,19 @@ function Read-CsvFileName {
             $candidate = "$candidate.csv"
         }
 
-        return (Join-Path -Path $DirectoryPath -ChildPath $candidate)
+        $candidatePath = (Join-Path -Path $DirectoryPath -ChildPath $candidate)
+        if (Test-Path -LiteralPath $candidatePath) {
+            $overwrite = Read-YesNo -Prompt "WARNING: '$candidate' already exists and all data in it will be deleted if you continue. Overwrite it?" -DefaultYes $false
+            if ($overwrite) {
+                Remove-Item -LiteralPath $candidatePath -Force
+                return $candidatePath
+            }
+
+            Write-Host "Choose another file name or select an existing file." -ForegroundColor Yellow
+            continue
+        }
+
+        return $candidatePath
     }
 }
 
@@ -146,7 +158,19 @@ function Resolve-TargetCsvPath {
         $choice = "$choice.csv"
     }
 
-    return (Join-Path -Path $DirectoryPath -ChildPath $choice)
+    $candidatePath = (Join-Path -Path $DirectoryPath -ChildPath $choice)
+    if (Test-Path -LiteralPath $candidatePath) {
+        $overwrite = Read-YesNo -Prompt "WARNING: '$choice' already exists and all data in it will be deleted if you continue. Overwrite it?" -DefaultYes $false
+        if ($overwrite) {
+            Remove-Item -LiteralPath $candidatePath -Force
+            return $candidatePath
+        }
+
+        Write-Host "Choose another file name or select an existing file." -ForegroundColor Yellow
+        return Read-CsvFileName -Prompt "Enter a different CSV file name" -DirectoryPath $DirectoryPath
+    }
+
+    return $candidatePath
 }
 
 function Get-ComputerNumber {
@@ -155,44 +179,69 @@ function Get-ComputerNumber {
         [string]$CsvPath
     )
 
-    if (-not (Test-Path -LiteralPath $CsvPath)) {
-        $suggested = 1
-        $ok = Read-YesNo -Prompt "No existing entries found. Use computer number $suggested?" -DefaultYes $true
-        if ($ok) {
-            return $suggested
+    while ($true) {
+        $rows = @()
+        if (Test-Path -LiteralPath $CsvPath) {
+            try {
+                $rows = @(Import-Csv -LiteralPath $CsvPath -ErrorAction Stop)
+            }
+            catch {
+                Write-Host "Could not parse existing CSV. Starting numbering from 1." -ForegroundColor Yellow
+                $rows = @()
+            }
         }
 
-        return Read-PositiveInteger -Prompt "Enter computer number" -DefaultValue $suggested
-    }
+        $maxNumber = 0
+        foreach ($row in $rows) {
+            if ($null -eq $row.computer_number) {
+                continue
+            }
 
-    $rows = @()
-    try {
-        $rows = @(Import-Csv -LiteralPath $CsvPath -ErrorAction Stop)
-    }
-    catch {
-        Write-Host "Could not parse existing CSV. Starting numbering from 1." -ForegroundColor Yellow
-        $rows = @()
-    }
+            $candidate = 0
+            if ([int]::TryParse(($row.computer_number.ToString().Trim()), [ref]$candidate) -and $candidate -gt $maxNumber) {
+                $maxNumber = $candidate
+            }
+        }
 
-    $maxNumber = 0
-    foreach ($row in $rows) {
-        if ($null -eq $row.computer_number) {
+        $suggested = if ($maxNumber -ge 1) { $maxNumber + 1 } else { 1 }
+        $selected = $null
+
+        if ($rows.Count -eq 0) {
+            $ok = Read-YesNo -Prompt "No existing entries found. Use computer number $suggested?" -DefaultYes $true
+            if ($ok) {
+                $selected = $suggested
+            }
+            else {
+                $selected = Read-PositiveInteger -Prompt "Enter computer number" -DefaultValue $suggested
+            }
+        }
+        else {
+            $ok = Read-YesNo -Prompt "Use computer number $suggested for this scan?" -DefaultYes $true
+            if ($ok) {
+                $selected = $suggested
+            }
+            else {
+                $selected = Read-PositiveInteger -Prompt "Enter computer number" -DefaultValue $suggested
+            }
+        }
+
+        $existingRow = $rows | Where-Object {
+            $null -ne $_.computer_number -and
+            $_.computer_number.ToString().Trim() -eq $selected.ToString()
+        } | Select-Object -First 1
+
+        if ($existingRow) {
+            $overwrite = Read-YesNo -Prompt "WARNING: computer number $selected already exists. Overwriting it will replace the existing row. Continue?" -DefaultYes $false
+            if ($overwrite) {
+                return $selected
+            }
+
+            Write-Host "Choose a different computer number." -ForegroundColor Yellow
             continue
         }
 
-        $candidate = 0
-        if ([int]::TryParse(($row.computer_number.ToString().Trim()), [ref]$candidate) -and $candidate -gt $maxNumber) {
-            $maxNumber = $candidate
-        }
+        return $selected
     }
-
-    $suggested = if ($maxNumber -ge 1) { $maxNumber + 1 } else { 1 }
-    $ok = Read-YesNo -Prompt "Use computer number $suggested for this scan?" -DefaultYes $true
-    if ($ok) {
-        return $suggested
-    }
-
-    return Read-PositiveInteger -Prompt "Enter computer number" -DefaultValue $suggested
 }
 
 function Get-DriveTypeName {
@@ -448,13 +497,26 @@ $row = [ordered]@{
 }
 
 $rowObject = New-Object PSObject -Property $row
+$existingRows = @()
+if (Test-Path -LiteralPath $csvPath) {
+    try {
+        $existingRows = @(Import-Csv -LiteralPath $csvPath -ErrorAction Stop)
+    }
+    catch {
+        Write-Host "Could not read existing CSV. Recreating file from scratch." -ForegroundColor Yellow
+        $existingRows = @()
+    }
+}
 
-if (-not (Test-Path -LiteralPath $csvPath)) {
-    $rowObject | Export-Csv -LiteralPath $csvPath -NoTypeInformation -Encoding UTF8
-}
-else {
-    $rowObject | Export-Csv -LiteralPath $csvPath -NoTypeInformation -Append -Encoding UTF8
-}
+$filteredRows = @(
+    $existingRows | Where-Object {
+        $null -eq $_.computer_number -or $_.computer_number.ToString().Trim() -ne $computerNumber.ToString()
+    }
+)
+
+$allRows = @($filteredRows)
+$allRows += $rowObject
+$allRows | Export-Csv -LiteralPath $csvPath -NoTypeInformation -Encoding UTF8
 
 Write-Host ""
 Write-Host "Scan complete." -ForegroundColor Green
