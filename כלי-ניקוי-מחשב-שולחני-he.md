@@ -3,20 +3,21 @@
 ## רשימת כלים מומלצת
 
 ### חובה
-1. מפוח אוויר חשמלי (או אוויר דחוס)  
-2. רצועת יד אנטי-סטטית (ESD) + משטח ESD  
-3. סט מברגים מדויקים  
-4. מברשת אנטי-סטטית רכה  
-5. מטליות מיקרופייבר  
-6. אלכוהול איזופרופיל 90%+  
-7. מקלות ניקוי/אוזניים (Cotton Swabs)  
-8. קופסה/מגש מגנטי לברגים  
-9. פנס קטן
+- מפוח אוויר חשמלי (או אוויר דחוס) 
+- מברגה 
+- מטליות מיקרופייבר  
 
 ### אופציונלי (מומלץ)
 - משחה תרמית (אם מפרקים קירור מעבד)
 - כפפות ניטריל חד-פעמיות
 - מסכה נגד אבק
+- רצועת יד אנטי-סטטית (ESD) + משטח ESD
+- סט מברגים מדויקים
+- מברשת אנטי-סטטית רכה
+- מקלות ניקוי/אוזניים (Cotton Swabs)  
+- קופסה/מגש מגנטי לברגים  
+- פנס קטן
+- אלכוהול איזופרופיל 90% 
 
 ---
 
@@ -27,14 +28,16 @@
 
 | פריט | טווח מחיר משוער (₪) | קישור רכישה |
 |---|---:|---|
-| סט מברגים מדויקים | 40–250 | [Zap – חיפוש "מברג מדויק"](https://www.zap.co.il/search.aspx?keyword=%D7%9E%D7%91%D7%A8%D7%92%20%D7%9E%D7%93%D7%95%D7%99%D7%A7) |
+| קומפרסור | 195 | [אקדח לחץ אויר קומפרסור חשמלי 500 ואט עוצמתי לניקוי מזגנים](https://electrosale.co.il/product/%D7%90%D7%A7%D7%93%D7%97-%D7%9C%D7%97%D7%A5-%D7%90%D7%95%D7%99%D7%A8-%D7%A7%D7%95%D7%9E%D7%A4%D7%A8%D7%A1%D7%95%D7%A8-%D7%97%D7%A9%D7%9E%D7%9C%D7%99-500-%D7%95%D7%90%D7%98-%D7%A2%D7%95%D7%A6%D7%9E/?gad_source=4&gad_campaignid=1622169119&gclid=CjwKCAjw_9bWBhBGEiwAomyTInQF1LIzenneOMQyX7oF_FoPtZwFQfq2B26EZ6ZvT5oWEjCFTWpnehoC6ksQAvD_BwE) |
+| מברגה | 189 | [מברג חשמלי אלחוטי נטען משולב סט ביטים ענקי Screwdriver](https://www.twistore.co.il/p/68_in_1_Electric_Screwdriver?gad_source=4&gad_campaignid=20912220449&gclid=CjwKCAjwotzWBhBFEiwA1JhPoLlS1ka55YDAFnyMjA9o3_wDrXEanj3bA_JMzZ6E1uRsI3BzqceH7hoCJJQQAvD_BwE) |
+| מדבקות | 10–50 | [מדבקות ליומן - תאריכים](https://he.whataboutpaper.com/collections/sale/products/planner-stickers-date-28) |
+<!--
+| רצועת ESD (משלוח לישראל) | 10–40 | [AliExpress – ESD Wrist Strap](https://he.aliexpress.com/w/wholesale-esd-wrist-strap.html) |
 | משחה תרמית | 20–80 | [Zap – חיפוש "משחה תרמית"](https://www.zap.co.il/search.aspx?keyword=%D7%9E%D7%A9%D7%97%D7%94%20%D7%AA%D7%A8%D7%9E%D7%99%D7%AA) |
 | רצועת יד אנטי-סטטית | 20–70 | [Zap – חיפוש "רצועת אנטי סטטית"](https://www.zap.co.il/search.aspx?keyword=%D7%A8%D7%A6%D7%95%D7%A2%D7%AA%20%D7%90%D7%A0%D7%98%D7%99%20%D7%A1%D7%98%D7%98%D7%99%D7%AA) |
-| קומפרסור | 195 | [אקדח לחץ אויר קומפרסור חשמלי 500 ואט עוצמתי לניקוי מזגנים](https://electrosale.co.il/product/%D7%90%D7%A7%D7%93%D7%97-%D7%9C%D7%97%D7%A5-%D7%90%D7%95%D7%99%D7%A8-%D7%A7%D7%95%D7%9E%D7%A4%D7%A8%D7%A1%D7%95%D7%A8-%D7%97%D7%A9%D7%9E%D7%9C%D7%99-500-%D7%95%D7%90%D7%98-%D7%A2%D7%95%D7%A6%D7%9E/?gad_source=4&gad_campaignid=1622169119&gclid=CjwKCAjw_9bWBhBGEiwAomyTInQF1LIzenneOMQyX7oF_FoPtZwFQfq2B26EZ6ZvT5oWEjCFTWpnehoC6ksQAvD_BwE) |
-| מטליות מיקרופייבר | 10–50 | [Zap – חיפוש "מטלית מיקרופייבר"](https://www.zap.co.il/search.aspx?keyword=%D7%9E%D7%98%D7%9C%D7%99%D7%AA%20%D7%9E%D7%99%D7%A7%D7%A8%D7%95%D7%A4%D7%99%D7%99%D7%91%D7%A8) |
+| סט מברגים מדויקים | 40–250 | [Zap – חיפוש "מברג מדויק"](https://www.zap.co.il/search.aspx?keyword=%D7%9E%D7%91%D7%A8%D7%92%20%D7%9E%D7%93%D7%95%D7%99%D7%A7) |
 | אלכוהול איזופרופיל | 20–70 | [Zap – חיפוש "אלכוהול איזופרופיל"](https://www.zap.co.il/search.aspx?keyword=%D7%90%D7%9C%D7%9B%D7%95%D7%94%D7%95%D7%9C%20%D7%90%D7%99%D7%96%D7%95%D7%A4%D7%A8%D7%95%D7%A4%D7%99%D7%9C) |
-| רצועת ESD (משלוח לישראל) | 10–40 | [AliExpress – ESD Wrist Strap](https://he.aliexpress.com/w/wholesale-esd-wrist-strap.html) |
-| ערכת ניקוי מחשב (משלוח לישראל) | 20–120 | [AliExpress – Computer Cleaning Kit](https://he.aliexpress.com/w/wholesale-computer-cleaning-kit.html) |
+-->
 
 ---
 
